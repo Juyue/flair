@@ -1,6 +1,10 @@
 import os
 from flair.models import SequenceTagger
+from flair.data_fetcher import NLPTaskDataFetcher
 from flair.data import Sentence
+from typing import List, Dict, Union
+
+
 import csv
 data_folder = '/home/jupyter/data_ner/'
 TAG_Dict = {'PER','LOC','MIS','ORG'}
@@ -9,14 +13,17 @@ def from_model_to_solution(model_folder):
     model = SequenceTagger.load_from_file(model_file)
     
     print("load model okay")
-    file_str_bank = ['dev', 'test']
+    file_str_bank = ['dev', 'test','train']
+#     file_str_bank = ['train']
     for file_str in file_str_bank:
         raw_file = file_str + '_raw.txt'
         file_prediction = os.path.join(data_folder, raw_file)
-        text_sentence = from_file_to_text(file_prediction)
+#         text_sentence = from_file_to_text(file_prediction)
+        column_format = {0: 'text'}
+        sentences_train: List[Sentence] = NLPTaskDataFetcher.read_column_data(file_prediction, column_format)
         
         tmp_file = file_str + '_tmp.txt'
-        from_text_to_tmp_file(model, text_sentence, tmp_file)
+        from_text_to_tmp_file(model, sentences_train, tmp_file)
 
         output_file = file_str + '_output.csv'
         from_tmp_file_to_output_file_v2(tmp_file, output_file, file_str+'.txt')
@@ -29,7 +36,8 @@ def from_file_to_text(filename):
         for ww in f.readlines():
             if ww == '.' or ww == '\n' or ww == '.\n':
                 if sent:
-                    sent.append('.')
+                    if ww == '.' or ww == '.\n':
+                        sent.append('.')
                     text_sentence.append(sent)
                 sent = []
                 continue
@@ -45,8 +53,8 @@ def from_text_to_tmp_file(model, text_sentence, tmp_file):
     output_str = []        
     for t_s in text_sentence:
         # change into sentence format.
-        sentence = Sentence(' '.join(t_s), use_tokenizer=True)
-        
+#         sentence = Sentence(' '.join(t_s), use_tokenizer=True)
+        sentence = t_s
         # 11 predict tags and print
         model.predict(sentence)
         
