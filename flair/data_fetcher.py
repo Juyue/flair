@@ -265,6 +265,7 @@ class NLPTaskDataFetcher:
         if test_file is not None:
             sentences_test: List[Sentence] = NLPTaskDataFetcher.read_column_data(test_file, column_format)
         else:
+            print('load 10 % of the train data as test dataset')
             sentences_test: List[Sentence] = [sentences_train[i] for i in
                                               NLPTaskDataFetcher.__sample(len(sentences_train), 0.1)]
             sentences_train = [x for x in sentences_train if x not in sentences_test]
