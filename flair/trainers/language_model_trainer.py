@@ -193,7 +193,8 @@ class LanguageModelTrainer:
         self.test_mode: bool = test_mode
 
         self.loss_function = torch.nn.CrossEntropyLoss()
-        self.log_interval = 100
+        self.log_interval = 10000
+        print('log_interval {}'.format(self.log_interval))
         self.num_workers = 2
         self.epoch = epoch
         self.split = split
@@ -244,7 +245,7 @@ class LanguageModelTrainer:
                                                                  patience=patience)
 
             training_generator = DataLoader(self.corpus.train, shuffle=False, num_workers=self.num_workers)
-
+            
             for epoch in range(self.epoch, max_epochs):
                 epoch_start_time = time.time()
                 # Shuffle training files randomly after serially iterating through corpus one
@@ -333,7 +334,7 @@ class LanguageModelTrainer:
 
                     log.info('best loss so far {:5.2f}'.format(best_val_loss))
 
-                    log.info(self.model.generate_text())
+#                     log.info(self.model.generate_text())
 
                     if checkpoint:
                         self.model.save_checkpoint(base_path / 'checkpoint.pt', optimizer, epoch, curr_split,

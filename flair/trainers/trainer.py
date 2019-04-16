@@ -129,7 +129,7 @@ class ModelTrainer:
                 previous_learning_rate = learning_rate
 
                 # stop training if learning rate becomes too small
-                if learning_rate < 1e-7:
+                if learning_rate < 1e-6:
                     log_line(log)
                     log.info('learning rate too small - quitting training!')
                     log_line(log)
